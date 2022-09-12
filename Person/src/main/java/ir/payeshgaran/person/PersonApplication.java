@@ -23,7 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class PersonApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(PersonApplication.class,args);
+        SpringApplication.run(PersonApplication.class, args);
     }
 
     @Bean
@@ -32,18 +32,17 @@ public class PersonApplication {
     }
 
     @Bean
-    CommandLineRunner runner(RoleDAO roleDAO , PersonServiceImp personServiceImp)
-    {
-       return args -> {
+    CommandLineRunner runner(RoleDAO roleDAO, PersonServiceImp personServiceImp) {
+        return args -> {
 
-           Role userRole = new Role("USER");
-           Role adminRole = new Role("ADMIN");
-           roleDAO.addRole(adminRole);
-           roleDAO.addRole(userRole);
-           Person admin = new Person("admin","admin","admin");
-           personServiceImp.saveAdmin(admin);
-           personServiceImp.addRoleToPerson(admin,adminRole);
-       };
+            Role userRole = new Role("USER");
+            Role adminRole = new Role("ADMIN");
+            roleDAO.addRole(adminRole);
+            roleDAO.addRole(userRole);
+            Person admin = new Person("admin", "admin", "admin");
+            personServiceImp.saveAdmin(admin);
+            personServiceImp.addRoleToPerson(admin, adminRole);
+        };
 
 
     }

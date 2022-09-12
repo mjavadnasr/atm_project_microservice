@@ -13,7 +13,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Person extends BaseEntity{
+public class Person extends BaseEntity {
 
     @Column(name = "username")
     private String username;

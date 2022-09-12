@@ -15,6 +15,6 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @Data
 @Builder
-public class Role  extends BaseEntity{
+public class Role extends BaseEntity {
     private String name;
 }

@@ -29,7 +29,6 @@ public class RealPersonDAO {
     public List<?> getRealById(Long id) {
         String query = findQuery("getRealById");
         return hibernateTemplate.find(query, new Long[]{id});
-
     }
 
     public String findQuery(String key) throws JAXBException {

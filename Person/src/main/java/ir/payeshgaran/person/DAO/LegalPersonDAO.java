@@ -1,7 +1,6 @@
 package ir.payeshgaran.person.DAO;
 
 import ir.payeshgaran.person.entity.Legal;
-import ir.payeshgaran.person.entity.Person;
 import ir.payeshgaran.person.model.Queries;
 import ir.payeshgaran.person.model.Query;
 import lombok.SneakyThrows;
@@ -31,8 +30,7 @@ public class LegalPersonDAO {
     @SneakyThrows
     public List<?> getLegalById(Long id) {
         String query = findQuery("getLegalById");
-        return (List<?>) hibernateTemplate.find(query, new Long[]{id});
-
+        return hibernateTemplate.find(query, new Long[]{id});
     }
 
     public String findQuery(String key) throws JAXBException {

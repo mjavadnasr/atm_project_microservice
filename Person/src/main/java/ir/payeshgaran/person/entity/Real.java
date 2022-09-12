@@ -13,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Data
 @Builder
-public class Real extends BaseEntity{
+public class Real extends BaseEntity {
 
     private String firstName;
     private String lastName;
@@ -21,5 +21,4 @@ public class Real extends BaseEntity{
     @OneToOne
     @JoinColumn
     private Person person;
-
 }

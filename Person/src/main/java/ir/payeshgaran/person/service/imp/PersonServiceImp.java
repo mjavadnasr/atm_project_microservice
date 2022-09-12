@@ -31,7 +31,6 @@ public record PersonServiceImp(PersonDAO personDAO, RealPersonDAO realPersonDAO,
                                RestTemplate restTemplate) implements PersonService, UserDetailsService {
     @Override
     public void save(PersonModel personModel) {
-        //todo handle null exception
         Role role = (Role) roleDAO.getRoleByName("USER").get(0);
         Person person = Person.builder()
                 .username(personModel.getUsername())
@@ -65,7 +64,6 @@ public record PersonServiceImp(PersonDAO personDAO, RealPersonDAO realPersonDAO,
         } else
             throw new RuntimeException();
     }
-
 
     public boolean isValidRealPerson(PersonModel personModel) {
         if (personModel.getFirstName() != null && personModel.getLastName() != null && personModel.getNationalCode() != null)
@@ -131,7 +129,6 @@ public record PersonServiceImp(PersonDAO personDAO, RealPersonDAO realPersonDAO,
                     personDAO.addPerson(person);
                     return newPass;
                 }
-
             return "BAD CONDITIONAL TY AGAIN LATER";
 
         } else {
@@ -144,12 +141,8 @@ public record PersonServiceImp(PersonDAO personDAO, RealPersonDAO realPersonDAO,
                     return newPass;
                 }
             return "BAD CONDITIONAL TY AGAIN LATER";
-
-
         }
-
     }
-
 
     @Override
     public void updateScore(String username, int score) {
@@ -171,10 +164,8 @@ public record PersonServiceImp(PersonDAO personDAO, RealPersonDAO realPersonDAO,
             throw new UsernameNotFoundException("Person Not Found");
         Person person = (Person) persons.get(0);
 
-
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(person.getRole().getName()));
-
 
         return new User(person.getUsername(), person.getPassword(), authorities);
     }
@@ -187,7 +178,6 @@ public record PersonServiceImp(PersonDAO personDAO, RealPersonDAO realPersonDAO,
     public void addRoleToPerson(Person person, Role role) {
         personDAO.addRoleToPerson(person, role);
     }
-
 
     public Double getRemainMoney(String username) {
         if (!username.isEmpty()) {
@@ -202,7 +192,6 @@ public record PersonServiceImp(PersonDAO personDAO, RealPersonDAO realPersonDAO,
             return -1.0;
         }
     }
-
 
     public String generateRandomPassword() {
         int leftLimit = 97; // letter 'a'

@@ -28,10 +28,8 @@ public record PersonController(PersonServiceImp personService) {
 
     @PostMapping()
     public ResponseEntity<String> createPerson(@RequestBody PersonModel personModel) {
-        //todo add jackson
         personService.save(personModel);
         return ResponseEntity.ok().body("Done!");
-
     }
 
     @GetMapping("/get_details/{username}")
@@ -48,7 +46,6 @@ public record PersonController(PersonServiceImp personService) {
             return ResponseEntity.ok().body("ERROR occurred -- Try AGAIN LATER");
 
         return ResponseEntity.ok().body(amount);
-
     }
 
     @GetMapping("/get-type/{username}")
@@ -59,7 +56,6 @@ public record PersonController(PersonServiceImp personService) {
     @GetMapping("/forget-password/{username}")
     public String forgetPassword(@PathVariable String username, @RequestBody PersonModel personModel) {
         return personService.sendPassword(username, personModel);
-
     }
 
     @GetMapping("/update-score/{username}/{score}")
@@ -68,15 +64,11 @@ public record PersonController(PersonServiceImp personService) {
         return true;
     }
 
-
     @GetMapping("/show-score")
     public ResponseEntity<Integer> showScore(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String username = getUsernameByToken(request, response);
         return ResponseEntity.ok().body(personService.showScore(username));
-
-
     }
-
 
     public static String getUsernameByToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
@@ -101,8 +93,6 @@ public record PersonController(PersonServiceImp personService) {
             throw new RuntimeException("Refresh Token id missing");
         }
         return username;
-
     }
-
 
 }

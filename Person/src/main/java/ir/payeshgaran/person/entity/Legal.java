@@ -13,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Data
 @Builder
-public class Legal extends BaseEntity{
+public class Legal extends BaseEntity {
 
     private String name;
     private String code;
