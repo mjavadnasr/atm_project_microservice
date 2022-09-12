@@ -35,21 +35,14 @@ public record TransactionServiceImp(TransactionDAO transactionDAO,
             return;
         }
 
-        String urlForPersonType = "http://PERSON/person/get-type/{username}";
-        Map<String, String> personParams = new HashMap<>();
-        personParams.put("username", username);
-        UriComponentsBuilder personBuilder = UriComponentsBuilder.fromUriString(urlForPersonType);
-        String personType = restTemplate.getForObject(personBuilder.buildAndExpand(personParams).toUri(), String.class);
+        String personType = findPersonType(username);
+        AccountModel depositor = getAccountModel(transactionModel, "depositor");
 
-        String url = "http://ACCOUNT/account/get-id/{accountNumber}";
-        Map<String, String> urlParams = new HashMap<>();
-        urlParams.put("accountNumber", transactionModel.getDepositor());
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
-        AccountModel depositor = restTemplate.getForObject(builder.buildAndExpand(urlParams).toUri(), AccountModel.class);
         if (!username.equals(depositor.getUsername())) {
             showError("this is not your account", response);
             return;
         }
+
         List<Transaction> transactions = (List<Transaction>) transactionDAO.allTransactionsBtDepositorId(depositor.getId());
         double sum = 0;
 
@@ -57,19 +50,9 @@ public record TransactionServiceImp(TransactionDAO transactionDAO,
             if (LocalDate.now().getDayOfMonth() == transaction.getCreatedAt().getDate())
                 sum += transaction.getAmount();
         }
-
-        System.out.println(sum);
-        System.out.println("***************************************************************************");
         if (transactionModel.getType().equals("normal")) {
-
-
             if (sum + transactionModel.getAmount() < 10000000.0 || personType.equals("legal")) {
-                String url1 = "http://ACCOUNT/account/get-id/{accountNumber}";
-                Map<String, String> urlParams1 = new HashMap<>();
-                urlParams1.put("accountNumber", transactionModel.getReceiver());
-                UriComponentsBuilder builder1 = UriComponentsBuilder.fromUriString(url);
-                AccountModel receiver = restTemplate.getForObject(builder1.buildAndExpand(urlParams1).toUri(), AccountModel.class);
-
+                AccountModel receiver = getAccountModel(transactionModel, "receiver");
                 if (depositor.getBalance() > transactionModel.getAmount()) {
                     Transaction transaction = Transaction.builder()
                             .depositor(depositor.getId())
@@ -80,45 +63,20 @@ public record TransactionServiceImp(TransactionDAO transactionDAO,
 
                     transactionDAO.addTransaction(transaction);
 
-                    String updateScore = "http://PERSON/person/update-score/{username}/{score}";
-                    Map mapScore = new HashMap();
-                    mapScore.put("username", username);
-                    mapScore.put("score", calculateScore(transaction.getAmount(), transactionModel.getType(), personType));
-                    UriComponentsBuilder builderScore = UriComponentsBuilder.fromUriString(updateScore);
-                    restTemplate.getForObject(builderScore.buildAndExpand(mapScore).toUri(), Boolean.class);
-
-
-                    String updateBalance = "http://ACCOUNT/account/update-balance/{depositor}/{receiver}/{amount}";
-                    Map urlParams2 = new HashMap<>();
-
-                    urlParams2.put("depositor", depositor.getId());
-                    urlParams2.put("receiver", receiver.getId());
-                    urlParams2.put("amount", transactionModel.getAmount());
-                    UriComponentsBuilder builder2 = UriComponentsBuilder.fromUriString(updateBalance);
-
-
-                    Boolean a = restTemplate.getForObject(builder2.buildAndExpand(urlParams2).toUri(), Boolean.class);
-
-
+                    updateScore(username, calculateScore(transaction.getAmount(), transactionModel.getType(), personType));
+                    updateAccountBalance(depositor.getId(), receiver.getId(), transactionModel.getAmount());
                 } else {
                     showError("NOT ENOUGH MONEY ", response);
                 }
             } else
                 showError("Limit 10 million for card 2 card", response);
 
-
         } else if (transactionModel.getType().equals("paya")) {
 
 
-            String url1 = "http://ACCOUNT/account/get-id/{accountNumber}";
-            Map<String, String> urlParams1 = new HashMap<>();
-            urlParams1.put("accountNumber", transactionModel.getReceiver());
-            UriComponentsBuilder builder1 = UriComponentsBuilder.fromUriString(url);
-            AccountModel receiver = restTemplate.getForObject(builder1.buildAndExpand(urlParams1).toUri(), AccountModel.class);
+            AccountModel receiver = getAccountModel(transactionModel, "receiver");
             if (personType.equals("real")) {
-
                 if (sum + transactionModel.getAmount() < 50000000.0) {
-
                     if (depositor.getBalance() > transactionModel.getAmount()) {
                         Transaction transaction = Transaction.builder()
                                 .depositor(depositor.getId())
@@ -128,35 +86,18 @@ public record TransactionServiceImp(TransactionDAO transactionDAO,
                                 .build();
                         transactionDAO.addTransaction(transaction);
 
-                        String updateScore = "http://PERSON/person/update-score/{username}/{score}";
-                        Map mapScore = new HashMap();
-                        mapScore.put("username", username);
-                        mapScore.put("score", calculateScore(transaction.getAmount(), transactionModel.getType(), personType));
-                        UriComponentsBuilder builderScore = UriComponentsBuilder.fromUriString(updateScore);
-                        restTemplate.getForObject(builderScore.buildAndExpand(mapScore).toUri(), Boolean.class);
 
+                        int score = calculateScore(transaction.getAmount(), transactionModel.getType(), personType);
+                        updateScore(username, score);
 
-                        String updateBalance = "http://ACCOUNT/account/update-balance/{depositor}/{receiver}/{amount}";
-                        Map urlParams2 = new HashMap<>();
-
-                        urlParams2.put("depositor", depositor.getId());
-                        urlParams2.put("receiver", receiver.getId());
-                        urlParams2.put("amount", transactionModel.getAmount());
-                        UriComponentsBuilder builder2 = UriComponentsBuilder.fromUriString(updateBalance);
-
-
-                        Boolean a = restTemplate.getForObject(builder2.buildAndExpand(urlParams2).toUri(), Boolean.class);
-
+                        updateAccountBalance(depositor.getId(), receiver.getId(), transactionModel.getAmount());
 
                     } else
                         showError("NOT ENOUGH MONEY ", response);
 
-
                 } else
                     showError("Limit 50 million for paya", response);
-
             }
-
             if (personType.equals("legal")) {
                 if (depositor.getBalance() > transactionModel.getAmount()) {
                     if (sum + transactionModel.getAmount() < 200000000.0) {
@@ -169,41 +110,62 @@ public record TransactionServiceImp(TransactionDAO transactionDAO,
                                 .build();
                         transactionDAO.addTransaction(transaction);
 
-                        String updateScore = "http://PERSON/person/update-score/{username}/{score}";
-                        Map mapScore = new HashMap();
-                        mapScore.put("username", username);
-                        mapScore.put("score", calculateScore(transaction.getAmount(), transactionModel.getType(), personType));
-                        UriComponentsBuilder builderScore = UriComponentsBuilder.fromUriString(updateScore);
-                        restTemplate.getForObject(builderScore.buildAndExpand(mapScore).toUri(), Boolean.class);
+                        updateScore(username, calculateScore(transaction.getAmount(), transactionModel.getType(), personType));
 
-                        String updateBalance = "http://ACCOUNT/account/update-balance/{depositor}/{receiver}/{amount}";
-                        Map urlParams2 = new HashMap<>();
-
-                        urlParams2.put("depositor", depositor.getId());
-                        urlParams2.put("receiver", receiver.getId());
-                        urlParams2.put("amount", transactionModel.getAmount());
-                        UriComponentsBuilder builder2 = UriComponentsBuilder.fromUriString(updateBalance);
-
-
-                        Boolean a = restTemplate.getForObject(builder2.buildAndExpand(urlParams2).toUri(), Boolean.class);
+                        updateAccountBalance(depositor.getId(), receiver.getId(), transactionModel.getAmount());
                     } else
                         showError("Limit 200 million for paya", response);
-
-
                 } else
                     showError("NOT ENOUGH MONEY ", response);
             }
-
-
         }
-
-
         showError("DONE", response);
+    }
+
+    private void updateAccountBalance(Long depositorId, Long receiverId, Double amount) {
+        String updateBalance = "http://ACCOUNT/account/update-balance/{depositor}/{receiver}/{amount}";
+        Map urlParams2 = new HashMap<>();
+
+        urlParams2.put("depositor", depositorId);
+        urlParams2.put("receiver", receiverId);
+        urlParams2.put("amount", amount);
+        UriComponentsBuilder builder2 = UriComponentsBuilder.fromUriString(updateBalance);
+        Boolean a = restTemplate.getForObject(builder2.buildAndExpand(urlParams2).toUri(), Boolean.class);
+    }
+
+    private void updateScore(String username, int score) {
+        String updateScore = "http://PERSON/person/update-score/{username}/{score}";
+        Map mapScore = new HashMap();
+        mapScore.put("username", username);
+        mapScore.put("score", score);
+        UriComponentsBuilder builderScore = UriComponentsBuilder.fromUriString(updateScore);
+        restTemplate.getForObject(builderScore.buildAndExpand(mapScore).toUri(), Boolean.class);
+    }
+
+    private AccountModel getAccountModel(TransactionModel transactionModel, String type) {
+        String url = "http://ACCOUNT/account/get-id/{accountNumber}";
+        Map<String, String> urlParams = new HashMap<>();
+        if (type == "depositor")
+            urlParams.put("accountNumber", transactionModel.getDepositor());
+        else
+            urlParams.put("accountNumber", transactionModel.getReceiver());
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+        AccountModel accountModel = restTemplate.getForObject(builder.buildAndExpand(urlParams).toUri(), AccountModel.class);
+        return accountModel;
+    }
+
+    private String findPersonType(String username) {
+        String urlForPersonType = "http://PERSON/person/get-type/{username}";
+        Map<String, String> personParams = new HashMap<>();
+        personParams.put("username", username);
+        UriComponentsBuilder personBuilder = UriComponentsBuilder.fromUriString(urlForPersonType);
+        String personType = restTemplate.getForObject(personBuilder.buildAndExpand(personParams).toUri(), String.class);
+        return personType;
     }
 
     @Override
     public List<TransactionModel> get10LeastTransactions(Long id) {
-
         return (List<TransactionModel>) transactionDAO.get10LeastTransactions(id);
     }
 
