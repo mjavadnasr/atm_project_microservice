@@ -1,6 +1,5 @@
 package ir.payeshgaran.account.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

@@ -1,5 +1,6 @@
 server:
   port: 9595
+
 spring:
   profiles:
     active: native

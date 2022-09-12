@@ -12,8 +12,6 @@ import ir.payeshgaran.account.model.PersonModel;
 import ir.payeshgaran.account.model.TransactionModel;
 import ir.payeshgaran.account.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -41,13 +39,12 @@ public class AccountServiceImp implements AccountService {
     @Override
     public void addAccount(AccountModel accountModel, String token, HttpServletResponse response) throws IOException {
 
-
         if (token == null) {
             showError("\"TOKEN IS EMPTY\"", response);
-
-
         }
+
         String username = verifyToken(token);
+
         if (!username.isEmpty()) {
             Account account = Account.builder()
                     .accountNumber(accountModel.getAccountNumber())
@@ -56,10 +53,8 @@ public class AccountServiceImp implements AccountService {
                     .build();
             accountDAO.addAccount(account);
         } else {
-
             showError("LOGIN AGAIN", response);
         }
-
     }
 
     public Object findAccountByAccountNumber(String accountNumber, String token, HttpServletResponse response) throws IOException {
@@ -77,7 +72,7 @@ public class AccountServiceImp implements AccountService {
     public AccountModel getIdByAccountNumber(String accountNumber) {
         List accounts = accountDAO.findAccountByAccountNumber(accountNumber);
         Account account = (Account) accounts.get(0);
-        AccountModel accountModel = new AccountModel(account.getId(), account.getBalance() , account.getUsername());
+        AccountModel accountModel = new AccountModel(account.getId(), account.getBalance(), account.getUsername());
         return accountModel;
     }
 
@@ -92,7 +87,6 @@ public class AccountServiceImp implements AccountService {
         return null;
     }
 
-
     @Override
     public Boolean updateBalance(Long deposit, Long receive, Double amount) {
         List depositors = accountDAO.findAccountById(deposit);
@@ -104,22 +98,18 @@ public class AccountServiceImp implements AccountService {
         receiver.setBalance(receiver.getBalance() + amount);
 
         return true;
-
-
     }
 
     @Override
-    public List get10LeastTransactions(String accountNumber , HttpServletResponse response , String token) {
+    public List get10LeastTransactions(String accountNumber, HttpServletResponse response, String token) {
         List accounts = accountDAO.findAccountByAccountNumber(accountNumber);
         Long id = ((Account) accounts.get(0)).getId();
         String url = "https://TRANSACTION/transaction/get-10-least-transactions/{id}";
         Map<String, Long> param = new HashMap<>();
         param.put("id", id);
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
-       List<TransactionModel> transactionModels =  restTemplate.getForObject(builder.buildAndExpand(param).toUri(), List.class);
-       return transactionModels;
-
-
+        List<TransactionModel> transactionModels = restTemplate.getForObject(builder.buildAndExpand(param).toUri(), List.class);
+        return transactionModels;
     }
 
     private String verifyToken(String authorizationHeader) {
@@ -132,17 +122,12 @@ public class AccountServiceImp implements AccountService {
                 DecodedJWT decodedJWT = verifier.verify(token);
                 username = decodedJWT.getSubject();
 
-
             } catch (Exception e) {
                 e.printStackTrace();
-
             }
-
         }
         return username;
-
     }
-
 
     public PersonModel findPersonDetails(String token, HttpServletResponse response) throws IOException {
         String username = verifyToken(token);
@@ -166,10 +151,7 @@ public class AccountServiceImp implements AccountService {
         showError("LOGIN AGAIN", response);
 
         return null;
-
-
     }
-
 
     @Override
     public Double getAllMoneyByUsername(String username) {
@@ -187,7 +169,5 @@ public class AccountServiceImp implements AccountService {
         errors.put("ERROR", message);
         response.setContentType(APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), errors);
-
     }
-
 }

@@ -15,6 +15,3 @@ public class AccountApplication {
         SpringApplication.run(AccountApplication.class,args);
     }
 }
-
-
-//todo send jwt token fron person to account

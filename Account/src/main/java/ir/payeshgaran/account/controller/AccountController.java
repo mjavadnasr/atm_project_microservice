@@ -47,16 +47,16 @@ public record AccountController(AccountServiceImp accountService) {
         return ResponseEntity.ok().body(accountService.getAllMoneyByUsername(username));
 
     }
+
     @GetMapping("/update-balance/{depositor}/{receiver}/{amount}")
-    public boolean updateBalance(@PathVariable("depositor") Long deposit, @PathVariable("receiver") Long receive, @PathVariable Double amount)
-    {
-        return accountService.updateBalance(deposit,receive,amount);
+    public boolean updateBalance(@PathVariable("depositor") Long deposit, @PathVariable("receiver") Long receive, @PathVariable Double amount) {
+        return accountService.updateBalance(deposit, receive, amount);
 
     }
+
     @GetMapping("/get-10-least-transactions/{accountNumber}")
-    public ResponseEntity<?> get10LeastTransactions(@PathVariable String accountNumber ,  HttpServletResponse response, @RequestHeader("Authorization") String token)
-    {
-        return ResponseEntity.ok().body(accountService.get10LeastTransactions(accountNumber , response , token));
+    public ResponseEntity<?> get10LeastTransactions(@PathVariable String accountNumber, HttpServletResponse response, @RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok().body(accountService.get10LeastTransactions(accountNumber, response, token));
 
     }
 }

@@ -20,5 +20,4 @@
         <key>getRoleByName</key>
         <value>from Role r where r.name = ?0</value>
     </query>
-
 </queries>

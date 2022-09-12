@@ -21,6 +21,6 @@ public interface AccountService {
 
     Boolean updateBalance(Long deposit, Long receive, Double amount);
 
-    List get10LeastTransactions(String accountNumber , HttpServletResponse response , String token);
+    List get10LeastTransactions(String accountNumber, HttpServletResponse response, String token);
 }
 
