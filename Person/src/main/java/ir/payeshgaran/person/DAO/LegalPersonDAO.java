@@ -29,21 +29,8 @@ public class LegalPersonDAO {
 
     @SneakyThrows
     public List<?> getLegalById(Long id) {
-        String query = findQuery("getLegalById");
-        return hibernateTemplate.find(query, new Long[]{id});
+        return hibernateTemplate.find("from Legal l where l.person = '" + id + "'");
     }
 
-    public String findQuery(String key) throws JAXBException {
 
-        File file = new File("config-server/src/main/resources/config/query/person.xml");
-        JAXBContext jaxbContext = JAXBContext.newInstance(Queries.class);
-        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-        Queries rootEl = (Queries) jaxbUnmarshaller.unmarshal(file);
-
-        for (Query query : rootEl.getQueries()) {
-            if (query.getKey().equals(key))
-                return query.getValue();
-        }
-        return null;
-    }
 }

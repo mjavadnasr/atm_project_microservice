@@ -82,8 +82,8 @@ public record PersonServiceImp(PersonDAO personDAO, RealPersonDAO realPersonDAO,
         List persons = personDAO.getPersonByUsername(username);
         Person person = (Person) persons.get(0);
         Long id = person.getId();
-        List<?> legals = legalPersonDAO.getLegalById(id);
         List<?> reals = realPersonDAO.getRealById(id);
+        List<?> legals = legalPersonDAO.getLegalById(id);
 
         if (legals.size() != 0) {
             Legal legal = (Legal) legals.get(0);

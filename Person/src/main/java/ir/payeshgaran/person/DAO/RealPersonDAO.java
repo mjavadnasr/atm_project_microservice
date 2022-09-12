@@ -1,5 +1,6 @@
 package ir.payeshgaran.person.DAO;
 
+import ir.payeshgaran.person.entity.Person;
 import ir.payeshgaran.person.entity.Real;
 import ir.payeshgaran.person.model.Queries;
 import ir.payeshgaran.person.model.Query;
@@ -27,21 +28,8 @@ public class RealPersonDAO {
 
     @SneakyThrows
     public List<?> getRealById(Long id) {
-        String query = findQuery("getRealById");
-        return hibernateTemplate.find(query, new Long[]{id});
+        return hibernateTemplate.find("from Real r where r.person = '"+id+"'");
     }
 
-    public String findQuery(String key) throws JAXBException {
 
-        File file = new File("config-server/src/main/resources/config/query/person.xml");
-        JAXBContext jaxbContext = JAXBContext.newInstance(Queries.class);
-        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-        Queries rootEl = (Queries) jaxbUnmarshaller.unmarshal(file);
-
-        for (Query query : rootEl.getQueries()) {
-            if (query.getKey().equals(key))
-                return query.getValue();
-        }
-        return null;
-    }
 }
