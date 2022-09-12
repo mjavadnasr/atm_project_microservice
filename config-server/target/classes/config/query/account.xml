@@ -12,5 +12,4 @@
         <key>findAccountById</key>
         <value>from Account a where a.id = ?0</value>
     </query>
-
 </queries>

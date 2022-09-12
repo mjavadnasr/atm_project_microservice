@@ -8,5 +8,4 @@
         <key>get10LeastTransactions</key>
         <value>from Transaction t where t.depositor = ?0 or t.receiver = ?1 order by t.id desc</value>
     </query>
-
 </queries>
