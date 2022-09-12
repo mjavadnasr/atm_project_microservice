@@ -46,8 +46,7 @@ public record TransactionServiceImp(TransactionDAO transactionDAO,
         urlParams.put("accountNumber", transactionModel.getDepositor());
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
         AccountModel depositor = restTemplate.getForObject(builder.buildAndExpand(urlParams).toUri(), AccountModel.class);
-        if (!username.equals(depositor.getUsername()))
-        {
+        if (!username.equals(depositor.getUsername())) {
             showError("this is not your account", response);
             return;
         }
@@ -205,9 +204,7 @@ public record TransactionServiceImp(TransactionDAO transactionDAO,
     @Override
     public List<TransactionModel> get10LeastTransactions(Long id) {
 
-
         return (List<TransactionModel>) transactionDAO.get10LeastTransactions(id);
-
     }
 
     private String verifyToken(String authorizationHeader) {
@@ -220,24 +217,18 @@ public record TransactionServiceImp(TransactionDAO transactionDAO,
                 DecodedJWT decodedJWT = verifier.verify(token);
                 username = decodedJWT.getSubject();
 
-
             } catch (Exception e) {
-                System.out.println(e);
-
+                e.printStackTrace();
             }
-
         }
         return username;
-
     }
-
 
     private void showError(String message, HttpServletResponse response) throws IOException {
         Map<String, String> errors = new HashMap<>();
         errors.put("ERROR", message);
         response.setContentType(APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), errors);
-
     }
 
     private int calculateScore(double amount, String transactionType, String personType) {
@@ -262,6 +253,5 @@ public record TransactionServiceImp(TransactionDAO transactionDAO,
             }
         }
         return score;
-
     }
 }

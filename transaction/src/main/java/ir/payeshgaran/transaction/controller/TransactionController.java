@@ -14,15 +14,14 @@ import java.util.List;
 @RequestMapping("/transaction")
 public record TransactionController(TransactionServiceImp transactionService) {
 
-
     @PostMapping
-    public ResponseEntity<String> addTransaction(@RequestBody TransactionModel transactionModel , @RequestHeader("Authorization") String token , HttpServletResponse response) throws IOException {
-        transactionService.addTransaction(transactionModel , token, response);
+    public ResponseEntity<String> addTransaction(@RequestBody TransactionModel transactionModel, @RequestHeader("Authorization") String token, HttpServletResponse response) throws IOException {
+        transactionService.addTransaction(transactionModel, token, response);
         return ResponseEntity.ok().body("DONE");
-
     }
+
     @GetMapping("/get-10-least-transactions/{id}")
-    public List<TransactionModel> get10LeastTransactions(@PathVariable Long id ) throws IOException {
+    public List<TransactionModel> get10LeastTransactions(@PathVariable Long id) throws IOException {
         return transactionService.get10LeastTransactions(id);
     }
 }

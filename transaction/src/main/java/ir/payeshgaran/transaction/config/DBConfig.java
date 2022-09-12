@@ -22,7 +22,6 @@ Configure Hibernate Template
 @ComponentScan("ir.payeshgaran")
 public class DBConfig {
 
-
     @Bean
     public HibernateTemplate hibernateTemplate() {
         return new HibernateTemplate(sessionFactory());
@@ -63,7 +62,5 @@ public class DBConfig {
         dataSource.setPassword("");
 
         return dataSource;
-
-
     }
 }

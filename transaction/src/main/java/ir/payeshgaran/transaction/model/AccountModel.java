@@ -11,7 +11,7 @@ public class AccountModel {
     private Long id;
     private String accountNumber;
     private Double balance;
-    private String  username;
+    private String username;
 
     public AccountModel(Long id, Double balance) {
         this.id = id;
