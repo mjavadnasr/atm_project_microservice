@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<queries>
+    <query>
+        <key>findAccountByAccountNumber</key>
+        <value>from Account a where a.accountNumber =?0</value>
+    </query>
+    <query>
+        <key>findAccountByUsername</key>
+        <value>from Account a where a.username = ?0</value>
+    </query>
+    <query>
+        <key>findAccountById</key>
+        <value>from Account a where a.id = ?0</value>
+    </query>
+
+</queries>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<queries>
+    <query>
+        <key>getLegalById</key>
+        <value>from Legal l where l.person = ?0</value>
+    </query>
+    <query>
+        <key>getPersonByUsername</key>
+        <value>from Person p where p.username = ?0</value>
+    </query>
+    <query>
+        <key>getType</key>
+        <value>from Person p where p.username = ?0</value>
+    </query>
+    <query>
+        <key>getRealById</key>
+        <value>from Real r where r.person = ?0</value>
+    </query>
+    <query>
+        <key>getRoleByName</key>
+        <value>from Role r where r.name = ?0</value>
+    </query>
+
+</queries>

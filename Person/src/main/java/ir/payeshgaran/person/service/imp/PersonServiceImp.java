@@ -84,8 +84,8 @@ public record PersonServiceImp(PersonDAO personDAO, RealPersonDAO realPersonDAO,
         List persons = personDAO.getPersonByUsername(username);
         Person person = (Person) persons.get(0);
         Long id = person.getId();
-        List<?> legals = legalPersonDAO.getById(id);
-        List<?> reals = realPersonDAO.getById(id);
+        List<?> legals = legalPersonDAO.getLegalById(id);
+        List<?> reals = realPersonDAO.getRealById(id);
 
         if (legals.size() != 0) {
             Legal legal = (Legal) legals.get(0);
@@ -123,7 +123,7 @@ public record PersonServiceImp(PersonDAO personDAO, RealPersonDAO realPersonDAO,
     public String sendPassword(String username, PersonModel personModel) {
         Person person = ((Person) personDAO.getPersonByUsername(username).get(0));
         if (person.getType().equals("legal")) {
-            Legal legal = ((Legal) legalPersonDAO.getById(person.getId()).get(0));
+            Legal legal = ((Legal) legalPersonDAO.getLegalById(person.getId()).get(0));
             if (legal.getName().equals(personModel.getCompanyName()))
                 if (legal.getCode().equals(personModel.getCompanyCode())) {
                     String newPass = generateRandomPassword();
@@ -135,7 +135,7 @@ public record PersonServiceImp(PersonDAO personDAO, RealPersonDAO realPersonDAO,
             return "BAD CONDITIONAL TY AGAIN LATER";
 
         } else {
-            Real real = ((Real) realPersonDAO.getById(person.getId()).get(0));
+            Real real = ((Real) realPersonDAO.getRealById(person.getId()).get(0));
             if (real.getLastName().equals(personModel.getLastName()))
                 if (real.getNationalCode().equals(personModel.getNationalCode())) {
                     String newPass = generateRandomPassword();

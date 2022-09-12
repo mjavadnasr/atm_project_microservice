@@ -43,3 +43,7 @@ eureka:
   instance:
     hostname: localhost
     prefer-ip-address: true
+
+h2:
+  console:
+    enabled: true

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<queries>
+    <query>
+        <key>allTransactionsBtDepositorId</key>
+        <value>from Transaction t where t.depositor = ?0</value>
+    </query>
+    <query>
+        <key>get10LeastTransactions</key>
+        <value>from Transaction t where t.depositor = ?0 or t.receiver = ?1 order by t.id desc</value>
+    </query>
+
+</queries>
